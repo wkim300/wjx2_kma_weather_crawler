@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 # from PyQt5.QtCore import pyqtSignal, pyqtSlot
-# from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
 import time
@@ -12,6 +11,7 @@ from urllib.parse import urlencode, unquote, quote_plus
 import urllib
 import json
 import csv
+
 
 # import requests
 
