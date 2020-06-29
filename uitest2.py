@@ -5,6 +5,7 @@ from PyQt5.QtGui import *
 # from PyQt5.QtCore import pyqtSignal, pyqtSlot
 # from PyQt5.QtWidgets import QApplication, QMainWindow
 # This is WK
+# This is swj
 
 import time
 from urllib.request import urlopen
