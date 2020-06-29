@@ -7,6 +7,7 @@ from PyQt5.QtGui import *
 # This is WK
 # This is swj
 # This is wjwjwjwjwjwjwj
+# this is swjswjswj
 
 import time
 from urllib.request import urlopen
