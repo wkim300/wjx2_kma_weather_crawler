@@ -2,17 +2,17 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
-# from PyQt5.QtCore import pyqtSignal, pyqtSlot
-
 
 import time
+
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
+
 import urllib
 import json
 import csv
 
-
+# from PyQt5.QtCore import pyqtSignal, pyqtSlot
 # import requests
 
 form_class = uic.loadUiType("uitest.ui")[0]
