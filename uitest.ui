@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>697</width>
-    <height>421</height>
+    <height>419</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -409,7 +409,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string/>
    </property>
   </widget>
   <widget class="QFrame" name="frame_4">
