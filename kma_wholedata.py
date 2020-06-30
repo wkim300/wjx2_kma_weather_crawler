@@ -88,7 +88,7 @@ for swjcity in swjcitynum_list :
             response_body = urlopen(swjreq, timeout = 120).read()
             response_body
             
-            ############################################locals()['swjdata'+str(swjcity)+str(swjyear)][swjpage] = json.loads(response_body)
+            ############### locals()['swjdata'+str(swjcity)+str(swjyear)][swjpage] = json.loads(response_body)
             print('Year : ' + str(swjyear) + ' // City : ' + str(swjcity) + ' // Page : ' + str(swjpage) + "of 10")
             time.sleep(0.1)
 
