@@ -1,5 +1,7 @@
 import sys
 import time
+import datetime
+from datetime import timedelta
 
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
@@ -27,19 +29,19 @@ import csv
 #     '전라남도 강진군(259)', '전라남도 고흥(262)', '전라남도 광양시(266)', '전라남도 목포(165)',
 #     '전라남도 보성군(258)', '전라남도 순천(174)', '전라남도 흑산도(169)', '전라남도 여수(168)',
 #     '전라남도 영광군(252)', '전라남도 완도(170)', '전라남도 장흥(260)', '전라남도 진도군(268)',
-#     '전라남도 해남(261)', '전락북도 고창군(251)', '전락북도 고창(172)', '전락북도 군산(140)',
-#     '전락북도 남원(247)', '전락북도 부안(243)', '전락북도 순창군(254)', '전락북도 임실(244)',
-#     '전락북도 장수(248)', '전락북도 전주(146)', '전락북도 정읍(245)', '제주도 성산(188)',
+#     '전라남도 해남(261)', '전라북도 고창군(251)', '전라북도 고창(172)', '전라북도 군산(140)',
+#     '전라북도 남원(247)', '전라북도 부안(243)', '전라북도 순창군(254)', '전라북도 임실(244)',
+#     '전라북도 장수(248)', '전라북도 전주(146)', '전라북도 정읍(245)', '제주도 성산(188)',
 #     '제주도 서귀포(189)', '제주도 제주(184)', '제주도 고산(185)', '충청남도 금산(238)',
 #     '충청남도 보령(235)', '충청남도 부여(236)', '충청남도 서산(129)', '충청남도 천안(232)',
 #     '충청남도 홍성(177)', '충청북도 보은(226)', '충청북도 추풍령(135)', '충청북도 제천(221)',
 #     '충청북도 청주(131)', '충청북도 충주(127)']
 
-# swjcities = ['강원도 춘천(101)','경기도 수원(119)', '경상남도 거제(294)', '경상북도 문경(273)',
-#     '광역/특별시 광주(156)', '전라남도 영광군(252)', '전락북도 정읍(245)', '제주도 성산(188)',
-#     '충청남도 보령(235)', '충청북도 보은(226)']
+swjcities = ['강원도 춘천(101)','경기도 수원(119)', '경상남도 거제(294)', '경상북도 문경(273)',
+    '광역/특별시 광주(156)', '전라남도 영광군(252)', '전라북도 정읍(245)', '제주도 성산(188)',
+    '충청남도 보령(235)', '충청북도 보은(226)']
 
-swjcities = ['강원도 춘천(101)','경기도 수원(119)']
+# swjcities = ['강원도 춘천(101)','경기도 수원(119)', '충청북도 보은(226)']
 
 swjcitynum_list=[]
 swjcityname_list=[]
@@ -90,7 +92,7 @@ for swjcity in swjcitynum_list :
     varname = 'swjraw' + str(swjcity)
     locals()[varname] = []
 
-    for swjyear in range(2015,2017) :
+    for swjyear in range(2015,2020) :
 
         for swjpage in range(1,11) :
 
@@ -142,9 +144,20 @@ for swjcity in swjcitynum_list :
         locals()[varname_all].append(locals()[varname2])
         del locals()[varname2]
     
-    locals()[varname_all+'2'] = [list(locals()[varname_all+'2']) for locals()[varname_all+'2'] in zip(*locals()[varname_all])]
+    varname_all2 = varname_all+'2'
+    locals()[varname_all2] = [list(locals()[varname_all2]) for locals()[varname_all2] in zip(*locals()[varname_all])]
+    del locals()[varname_all]
 
-        
+    pre_hournum = 23
+    locals()[varname_all2 + '_err_index'] = []
+    locals()[varname_all2 + '_diff_index'] = []
+    for swji in range(0,len(locals()[varname_all2])) : 
+        current_hournum = locals()[varname_all2][swji][0][11:13]
+        hourdiff = int(current_hournum) - pre_hournum
+        if ((hourdiff != -23) and (hourdiff != 1)) : 
+            locals()[varname_all2 + '_err_index'].append(swji)
+            locals()[varname_all2 + '_diff_index'].append(hourdiff)
+        pre_hournum = int(current_hournum)
 
 
 
