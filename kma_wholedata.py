@@ -90,7 +90,7 @@ for swjcity in swjcitynum_list :
     varname = 'swjraw' + str(swjcity)
     locals()[varname] = []
 
-    for swjyear in range(2015,2020) :
+    for swjyear in range(2015,2017) :
 
         for swjpage in range(1,11) :
 
@@ -98,12 +98,18 @@ for swjcity in swjcitynum_list :
             # print(swjurl+unquote(swjparams))
 
             swjreq = urllib.request.Request(swjurl+unquote(swjparams))
+            
+            swjdata=[]
+            while len(swjdata) < 1 : 
+                print('Year : ' + str(swjyear) + ' // City : ' + str(swjcity) + ' // Page : ' + str(swjpage) + "of 10")
+                response_body = urlopen(swjreq, timeout = 120).read()
+                swjdata = json.loads(response_body)[3]['info']
+                time.sleep(0.1)
 
-            response_body = urlopen(swjreq, timeout = 120).read()
-
-            print('Year : ' + str(swjyear) + ' // City : ' + str(swjcity) + ' // Page : ' + str(swjpage) + "of 10")
-
-            swjdata = json.loads(response_body)[3]['info']
+            # response_body = urlopen(swjreq, timeout = 120).read()
+            # print('Year : ' + str(swjyear) + ' // City : ' + str(swjcity) + ' // Page : ' + str(swjpage) + "of 10")
+            # swjdata = json.loads(response_body)[3]['info']
+            
             locals()[varname].append(swjdata)
 
             # for swjvar in swjvarlist : 
@@ -113,11 +119,17 @@ for swjcity in swjcitynum_list :
                     # except KeyError :
                     #     locals()['swj' + swjvar + str(swjcity)].append(missingvalues[swjvar])
 
-            time.sleep(0.1)
+            # time.sleep(0.1)
     
+    
+    varname_all = varname + '_all'
+    locals()[varname_all] = []
+
     for swjvar in swjvarlist : 
         varname2 = varname + '_' + swjvar
+        
         locals()[varname2] = []
+        
 
         for swji in range(0, len(locals()[varname])) : 
             for swjk in range(0, len(locals()[varname][swji])) : 
@@ -126,6 +138,13 @@ for swjcity in swjcitynum_list :
                     locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
                 except KeyError :
                     locals()[varname2].append(missingvalues[swjvar])
+
+        locals()[varname_all].append(locals()[varname2])
+        del locals()[varname2]
+    
+    locals()[varname_all+'2'] = [list(locals()[varname_all+'2']) for locals()[varname_all+'2'] in zip(*locals()[varname_all])]
+
+        
 
 
 
