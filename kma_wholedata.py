@@ -148,18 +148,35 @@ for swjcity in swjcitynum_list :
     locals()[varname_all2] = [list(locals()[varname_all2]) for locals()[varname_all2] in zip(*locals()[varname_all])]
     del locals()[varname_all]
 
-    pre_hournum = 23
+    # pre_hournum = 23
+    # locals()[varname_all2 + '_err_index'] = []
+    # locals()[varname_all2 + '_diff_index'] = []
+    # for swji in range(0,len(locals()[varname_all2])) : 
+    #     current_hournum = locals()[varname_all2][swji][0][11:13]
+    #     hourdiff = int(current_hournum) - pre_hournum
+    #     if ((hourdiff != -23) and (hourdiff != 1)) : 
+    #         locals()[varname_all2 + '_err_index'].append(swji)
+    #         locals()[varname_all2 + '_diff_index'].append(hourdiff)
+    #     pre_hournum = int(current_hournum)
+
+
+    # datetime method start
     locals()[varname_all2 + '_err_index'] = []
     locals()[varname_all2 + '_diff_index'] = []
-    for swji in range(0,len(locals()[varname_all2])) : 
-        current_hournum = locals()[varname_all2][swji][0][11:13]
-        hourdiff = int(current_hournum) - pre_hournum
-        if ((hourdiff != -23) and (hourdiff != 1)) : 
+    for swji in range(1,len(locals()[varname_all2])) : 
+        
+        current_hournum = datetime.datetime.strptime(locals()[varname_all2][swji][0], '%Y-%m-%d %H:%M')
+        pre_hournum = datetime.datetime.strptime(locals()[varname_all2][swji-1][0], '%Y-%m-%d %H:%M')
+
+        td = current_hournum - pre_hournum
+
+        hourdiff = (td.seconds)/3600
+
+        if (hourdiff != 1) : 
             locals()[varname_all2 + '_err_index'].append(swji)
-            locals()[varname_all2 + '_diff_index'].append(hourdiff)
-        pre_hournum = int(current_hournum)
-
-
+            locals()[varname_all2 + '_diff_index'].append(int(hourdiff))
+        pre_hournum = current_hournum
+    # datetime method end
 
 
 # for swjvar in swjvarlist : 
