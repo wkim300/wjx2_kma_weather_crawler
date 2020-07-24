@@ -37,11 +37,12 @@ import csv
 #     '충청남도 홍성(177)', '충청북도 보은(226)', '충청북도 추풍령(135)', '충청북도 제천(221)',
 #     '충청북도 청주(131)', '충청북도 충주(127)']
 
-swjcities = ['강원도 춘천(101)','경기도 수원(119)', '경상남도 거제(294)', '경상북도 문경(273)',
-    '광역/특별시 광주(156)', '전라남도 영광군(252)', '전라북도 정읍(245)', '제주도 성산(188)',
-    '충청남도 보령(235)', '충청북도 보은(226)']
+# swjcities = ['강원도 춘천(101)','경기도 수원(119)', '경상남도 거제(294)', '경상북도 문경(273)',
+#     '광역/특별시 광주(156)', '전라남도 영광군(252)', '전라북도 정읍(245)', '제주도 성산(188)',
+#     '충청남도 보령(235)', '충청북도 보은(226)']
 
 # swjcities = ['강원도 춘천(101)','경기도 수원(119)', '충청북도 보은(226)']
+swjcities = ['제주도 성산(188)']
 
 swjcitynum_list=[]
 swjcityname_list=[]
@@ -148,18 +149,7 @@ for swjcity in swjcitynum_list :
     locals()[varname_all2] = [list(locals()[varname_all2]) for locals()[varname_all2] in zip(*locals()[varname_all])]
     del locals()[varname_all]
 
-    # pre_hournum = 23
-    # locals()[varname_all2 + '_err_index'] = []
-    # locals()[varname_all2 + '_diff_index'] = []
-    # for swji in range(0,len(locals()[varname_all2])) : 
-    #     current_hournum = locals()[varname_all2][swji][0][11:13]
-    #     hourdiff = int(current_hournum) - pre_hournum
-    #     if ((hourdiff != -23) and (hourdiff != 1)) : 
-    #         locals()[varname_all2 + '_err_index'].append(swji)
-    #         locals()[varname_all2 + '_diff_index'].append(hourdiff)
-    #     pre_hournum = int(current_hournum)
-
-
+  
     # datetime method start
     locals()[varname_all2 + '_err_index'] = []
     locals()[varname_all2 + '_diff_index'] = []
@@ -177,6 +167,29 @@ for swjcity in swjcitynum_list :
             locals()[varname_all2 + '_diff_index'].append(int(hourdiff))
         pre_hournum = current_hournum
     # datetime method end
+
+missingvals = [99.9, 999, 999999, 999, 999, 0]
+num_prev_inserted = 0
+
+for swja in range(0,len(swjraw188_all2_err_index)) : 
+        
+    num_miss = swjraw188_all2_diff_index[swja]
+    index_miss = swjraw188_all2_err_index[swja] + num_prev_inserted
+    time_prev = datetime.datetime.strptime(swjraw188_all2[index_miss-1][0], '%Y-%m-%d %H:%M')
+    
+    list_insert=[]
+    for swjb in range(1,num_miss) : 
+        '''awefawef'''
+        time_insert = time_prev + datetime.timedelta(hours=swjb)
+        time_insert_char = datetime.datetime.strftime(time_insert, '%Y-%m-%d %H:%M')
+        list_insert.append([time_insert_char] + missingvals)
+        
+        ###########################여기
+        swjraw188_all2.insert()
+        ###########################부터
+
+
+
 
 
 # for swjvar in swjvarlist : 
