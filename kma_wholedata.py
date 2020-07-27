@@ -1,4 +1,5 @@
 import sys
+import copy
 import time
 import datetime
 from datetime import timedelta
@@ -172,26 +173,29 @@ for swjcity in swjcitynum_list :
 
 ### Missing value insert
 
-# missingvals = [99.9, 999, 999999, 999, 999, 0]
-# num_prev_inserted = 0
 
-# for swja in range(0,len(swjraw188_all2_err_index)) : 
+missingvals = [99.9, 999, 999999, 999, 999, 0]
+num_prev_inserted = 0
+
+swjraw188_all3 = copy.deepcopy(swjraw188_all2)
+
+for swja in range(0,len(swjraw188_all2_err_index)) : 
         
-#     num_miss = swjraw188_all2_diff_index[swja]
-#     index_miss = swjraw188_all2_err_index[swja] + num_prev_inserted
-#     time_prev = datetime.datetime.strptime(swjraw188_all2[index_miss-1][0], '%Y-%m-%d %H:%M')
+    num_miss = swjraw188_all2_diff_index[swja]
+    index_miss = swjraw188_all2_err_index[swja] + num_prev_inserted
+    time_prev = datetime.datetime.strptime(swjraw188_all3[index_miss-1][0], '%Y-%m-%d %H:%M')
     
-#     list_insert=[]
-#     for swjb in range(1,num_miss) : 
-#         '''awefawef'''
-#         time_insert = time_prev + datetime.timedelta(hours=swjb)
-#         time_insert_char = datetime.datetime.strftime(time_insert, '%Y-%m-%d %H:%M')
-#         list_insert.append([time_insert_char] + missingvals)
-                        
-#         list_insert.reverse()
-#         for swjc in range(0,len(list_insert)) : 
-#             swjraw188_all2.insert(index_miss, swjc)
-#             num_prev_inserted+=1
+    list_insert=[]
+    for swjb in range(1,num_miss) : 
+        time_insert = time_prev + datetime.timedelta(hours=swjb)
+        time_insert_char = datetime.datetime.strftime(time_insert, '%Y-%m-%d %H:%M')
+        list_insert.append([time_insert_char] + missingvals)
+
+    list_insert.reverse()
+
+    for swjc in list_insert : 
+        swjraw188_all3.insert(index_miss, swjc)
+        num_prev_inserted+=1
 
 ### insert end
 
