@@ -1,3 +1,6 @@
 *.epw
 *.csv
 /build
+*.audit
+*.stat
+*.ddy

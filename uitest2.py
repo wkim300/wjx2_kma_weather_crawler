@@ -98,7 +98,7 @@ class WindowClass(QMainWindow, form_class) :
         text_selected = self.swjlist.currentItem().text()
         self.swjcityname = text_selected[text_selected.find(' ')+1:]
 
-        print(self.swjcityname)
+        # print(self.swjcityname)
     
     def isleapyear(self, swjyear) : 
         '''awefawef'''
@@ -151,29 +151,22 @@ class WindowClass(QMainWindow, form_class) :
         
 
     def swjbtn1Fn(self) :
-        #self.Label이름.setText("String")
-        #Label에 글자를 바꾸는 메서드
-        #self.swjlabel.setText("swjbtn1 click")
-        
-        # global swjdata
 
         self.swjlist.setDisabled(True)
-        
         self.testbtn.setDisabled(True)
         self.testbtn.setStyleSheet("background-color: rgb(180, 180, 180)")
-
         self.swjdate.setDisabled(True)
 
-        self.swjdata = {}
+        
         swjurl = 'https://data.kma.go.kr/apiData/getData'
 
         swjDaysize = 366 if self.isleapyear(self.TargetYr) == True else 365
         self.maxday = swjDaysize
-        # swjDaysize = 7
-        # print(swjDaysize)
 
-        # for swji in range(1,swjDaysize+1):
-        for swji in range(1,11):
+        varname = 'swjraw' + str(self.swjcitynum)
+        locals()[varname] = []
+
+        for swji in range(1,11) :
 
             swjparams = self.swjparam(swji)
             print(swjurl+unquote(swjparams))
@@ -181,19 +174,22 @@ class WindowClass(QMainWindow, form_class) :
             self.swjlabel.setText(str(swji) + "/10" + " : 기상청 API 서버 데이터 조회중..")
             self.swjlabel.repaint()
             swjreq = urllib.request.Request(swjurl+unquote(swjparams))
-
-            response_body = urlopen(swjreq, timeout = 120).read()
-            response_body
             
-            self.swjdata[swji] = json.loads(response_body)
+            self.swjdata=[]
+            while len(self.swjdata) < 1 : 
+                print('Year : ' + str(self.TargetYr) + ' // City : ' + str(self.swjcitynum) + ' // Page : ' + str(swji) + "of 10")
+                response_body = urlopen(swjreq, timeout = 120).read()
+                self.swjdata = json.loads(response_body)[3]['info']
+                time.sleep(0.1)
             
-            # print("Day" + str(swji))
+            locals()[varname].append(self.swjdata)
+            
             QApplication.processEvents()
             swjprogress = (swji/10)*100
             self.swjpbar.setValue(swjprogress)
             self.swjpbar.repaint()
-            
-            time.sleep(0.1)
+
+
         
         self.swjlabel.setText("기상청 API 조회 완료")
 
@@ -261,32 +257,6 @@ class WindowClass(QMainWindow, form_class) :
                         locals()['swj'+swjvars].append(self.swjdata[swjday][3]['info'][swjhour][swjvars.upper()])
                     except KeyError :
                         locals()['swj'+swjvars].append(missingvalues[swjvars])
-
-
-
-
-            # for swjhour in range(0,24):
-
-            # if swjday == 10 :
-            #     '''awefawef'''
-            #     for swjhour in range(0,len(self.swjdata[swjday][3]['info'])):
-            #         print(swjhour)
-            #         for swjvars in swjvarlist:  # ICSR제외 나머지 missing처리
-            #             try :
-            #                 locals()['swj'+swjvars].append(self.swjdata[swjday][3]['info'][swjhour][swjvars.upper()])
-            #             except KeyError :
-            #                 locals()['swj'+swjvars].append(missingvalues[swjvars])
-            # else : 
-            #     '''awefawef'''
-            #     len(self.swjdata[swjday][3]['info'])
-            #     for swjhour in range(0,len(self.swjdata[swjday][3]['info'])):
-            #         print(swjhour)
-            #         for swjvars in swjvarlist:  # ICSR제외 나머지 missing처리
-            #             try :
-            #                 locals()['swj'+swjvars].append(self.swjdata[swjday][3]['info'][swjhour][swjvars.upper()])
-            #             except KeyError :
-            #                 locals()['swj'+swjvars].append(missingvalues[swjvars])
-
 
 
 
