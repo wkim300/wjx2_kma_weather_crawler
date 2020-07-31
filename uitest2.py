@@ -4,6 +4,9 @@ from PyQt5 import uic
 from PyQt5.QtGui import *
 
 import time
+import datetime
+from datetime import timedelta
+import copy
 
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
@@ -169,7 +172,7 @@ class WindowClass(QMainWindow, form_class) :
         for swji in range(1,11) :
 
             swjparams = self.swjparam(swji)
-            print(swjurl+unquote(swjparams))
+            # print(swjurl+unquote(swjparams))
 
             self.swjlabel.setText(str(swji) + "/10" + " : 기상청 API 서버 데이터 조회중..")
             self.swjlabel.repaint()
@@ -188,6 +191,83 @@ class WindowClass(QMainWindow, form_class) :
             swjprogress = (swji/10)*100
             self.swjpbar.setValue(swjprogress)
             self.swjpbar.repaint()
+
+        varname_all = varname + '_all'
+        locals()[varname_all] = []
+
+        swjvarlist = ['tm', 'ta', 'hm', 'pa', 'wd','ws', 'icsr']
+        missingvalues = {"ta":99.9 , "hm":999, "pa":9999.99, "wd":999, "ws":999, "icsr":0}
+        
+        for swjvar in swjvarlist : 
+            varname2 = varname + '_' + swjvar
+            
+            locals()[varname2] = []
+            
+
+            for swji in range(0, len(locals()[varname])) : 
+                for swjk in range(0, len(locals()[varname][swji])) : 
+                    # locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
+                    try : 
+                        locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
+                    except KeyError :
+                        locals()[varname2].append(missingvalues[swjvar])
+
+            locals()[varname_all].append(locals()[varname2])
+            del locals()[varname2]
+        
+        varname_all2 = varname_all+'2'
+        locals()[varname_all2] = [list(locals()[varname_all2]) for locals()[varname_all2] in zip(*locals()[varname_all])]
+        del locals()[varname_all]
+
+        # datetime method start
+        locals()[varname_all2 + '_err_index'] = []
+        locals()[varname_all2 + '_diff_index'] = []
+        for swji in range(1,len(locals()[varname_all2])) : 
+            
+            current_hournum = datetime.datetime.strptime(locals()[varname_all2][swji][0], '%Y-%m-%d %H:%M')
+            pre_hournum = datetime.datetime.strptime(locals()[varname_all2][swji-1][0], '%Y-%m-%d %H:%M')
+
+            td = current_hournum - pre_hournum
+
+            hourdiff = (td.seconds)/3600
+
+            if (hourdiff != 1) : 
+                locals()[varname_all2 + '_err_index'].append(swji)
+                locals()[varname_all2 + '_diff_index'].append(int(hourdiff))
+            pre_hournum = current_hournum
+        # datetime method end
+
+
+        ### Missing value insert    
+        varname_all3 = varname_all+'3'
+
+        missingvals = [99.9, 999, 9999.99, 999, 999, 0]
+        num_prev_inserted = 0
+
+        locals()[varname_all3] = copy.deepcopy(locals()[varname_all2])
+
+        for swja in range(0,len(locals()[varname_all2 + '_err_index'])) : 
+                
+            num_miss = locals()[varname_all2 + '_diff_index'][swja]
+            index_miss = locals()[varname_all2 + '_err_index'][swja] + num_prev_inserted
+            time_prev = datetime.datetime.strptime(locals()[varname_all3][index_miss-1][0], '%Y-%m-%d %H:%M')
+            
+            list_insert=[]
+            for swjb in range(1,num_miss) : 
+                time_insert = time_prev + datetime.timedelta(hours=swjb)
+                time_insert_char = datetime.datetime.strftime(time_insert, '%Y-%m-%d %H:%M')
+                list_insert.append([time_insert_char] + missingvals)
+
+            list_insert.reverse()
+
+            for swjc in list_insert : 
+                locals()[varname_all3].insert(index_miss, swjc)
+                num_prev_inserted+=1
+        ### insert end
+
+        self.swjraw2 = locals()[varname_all3]
+
+
 
 
         
@@ -208,6 +288,9 @@ class WindowClass(QMainWindow, form_class) :
         
         # print(self.maxday)
         
+
+##################################################################################################################################
+
 
     
     def swjbtn2Fn(self) :
@@ -233,48 +316,31 @@ class WindowClass(QMainWindow, form_class) :
         swjdatapart2[0] = [self.TargetYr for swji in swjdatapart2[0]]
         ##########
 
-        ### JSON데이터 후처리 // API데이터 별도 집계 파일용 변수 전처리
-        swjta=[] # 기온 T air
-        swjhm=[] # 습도 Humidity
-        swjwd=[] # 풍향 Wind direction
-        swjws=[] # 풍속 Wind speed
-        swjicsr=[] # 전일사량
-        swjpa = [] # 현지기압 pascal
-
         swjvarlist = ['ta', 'hm', 'pa', 'wd','ws', 'icsr']
-        # swjvarlist = ['ta', 'hm', 'pa', 'wd','ws']
         missingvalues = {"ta":99.9 , "hm":999, "pa":9999.99, "wd":999, "ws":999, "icsr":0}
         # PA는 나중에 단위환산(*100)을 하므로
         # 원래의 missing value에 단위환산계수를 나눈 값을 지정
 
-        for swjday in range(1,11) :
-        # for swjday in range(1,int(len(swjdatapart)/24)+1) :
+        self.swjraw3 = [list(self.swjraw3) for self.swjraw3 in zip(*self.swjraw2)]
+        # Row-matrix인 swjraw2를 Transpose하여 TA, HM 등 각 변수별로 하나의 List에 위치하도록 조정
 
-            for swjhour in range(0,len(self.swjdata[swjday][3]['info'])) :
-                # print(swjhour)
-                for swjvars in swjvarlist:  # ICSR제외 나머지 missing처리
-                    try :
-                        locals()['swj'+swjvars].append(self.swjdata[swjday][3]['info'][swjhour][swjvars.upper()])
-                    except KeyError :
-                        locals()['swj'+swjvars].append(missingvalues[swjvars])
+        self.swjraw3[6] = [num*277.7778 for num in self.swjraw3[6]]
+        self.swjraw3[3] = [num_pa*100 for num_pa in self.swjraw3[3]]
+        # 일사량, 현지기압 단위변환
 
-
-
-        swjicsr = [num*277.7778 for num in swjicsr]
-        swjpa = [num_pa*100 for num_pa in swjpa]
-
-        swj2 = [swjta, swjhm, swjpa, swjwd, swjws, swjicsr]
-        self.swj3 = [list(swj3) for swj3 in zip(*swj2)]
-        ##########
+        self.swjraw4 = [list(self.swjraw4) for self.swjraw4 in zip(*self.swjraw3)]
+        # 단위변환이 완료된 swjraw3을 이후에 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
+        
+        
 
 
         ### EPW파일용 리스트 조립
-        swjdatapart2[6] = swjta
-        swjdatapart2[8] = swjhm
-        swjdatapart2[9] = swjpa
-        swjdatapart2[13] = swjicsr
-        swjdatapart2[20] = swjwd
-        swjdatapart2[21] = swjws
+        swjdatapart2[6] = self.swjraw3[1] # TA
+        swjdatapart2[8] = self.swjraw3[2] # HM
+        swjdatapart2[9] = self.swjraw3[3] # PA
+        swjdatapart2[13] = self.swjraw3[6] # ICSR
+        swjdatapart2[20] = self.swjraw3[4] # WD
+        swjdatapart2[21] = self.swjraw3[5] # WS
 
         swjdatapart3 = [list(swjdatapart3) for swjdatapart3 in zip(*swjdatapart2)]
 
@@ -296,30 +362,24 @@ class WindowClass(QMainWindow, form_class) :
             for datalines in swjdatapart_csv : 
                 swjf2.write(datalines)
 
-
-        # swjallpart = []
-        # swjallpart.append(swjheader)
-        # swjallpart.append(swjdatapart3)
-        ##########
-
         self.swjlabel.setText("Post process done.")
 
+###################################################################################################################################
 
     def swjbtn3Fn(self) :
 
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
-        swjheader = ['Tair', 'Humidity', 'Pressure', 'WindDirection', 'WindSpeed', 'GlobalRadiation']
+        swjheader = ['Time', 'Tair', 'Humidity', 'Pressure', 'WindDirection', 'WindSpeed', 'GlobalRadiation']
         swjfilename = "output_weather_" + str(self.TargetYr) + "Yr_" + self.swjcityname + "_" + swjcurrenttime + ".csv"
         f = open(swjfilename,'w', encoding='utf-8', newline='')
         wr = csv.writer(f)
 
         wr.writerow(swjheader)
 
-        for swji in range(0,len(self.swj3)):
-            wr.writerow(self.swj3[swji])
+        for swji in range(0,len(self.swjraw4)):
+            wr.writerow(self.swjraw4[swji])
 
-        ##########################################################################
-
+        
         self.swjlabel.setText("CSV Out Done.")
 
         f.close()
