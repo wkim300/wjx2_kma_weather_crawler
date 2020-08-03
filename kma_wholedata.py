@@ -43,7 +43,7 @@ swjcities = ['강원도 춘천(101)','경기도 수원(119)', '경상남도 거�
     '충청남도 보령(235)', '충청북도 보은(226)']"""
 
 # swjcities = ['강원도 춘천(101)','경기도 수원(119)', '충청북도 보은(226)']
-swjcities = ['제주도 성산(188)']
+swjcities = ['경기도 수원(119)']
 
 swjcitynum_list=[]
 swjcityname_list=[]
@@ -82,7 +82,8 @@ def swjparam(pagenum, TargetYr, swjcitynum_param) :
 
 
 swjvarlist = ['tm', 'ta', 'hm', 'pa', 'wd','ws', 'icsr']
-missingvalues = {"ta":99.9 , "hm":999, "pa":9999.99, "wd":999, "ws":999, "icsr":0}
+missingvalues = {"ta":99.9 , "hm":999, "pa":999999, "wd":999, "ws":999, "icsr":0}
+
 
 
 
@@ -135,13 +136,21 @@ for swjcity in swjcitynum_list :
         varname2 = varname + '_' + swjvar
         
         locals()[varname2] = []
+
+        if (swjvar == 'icsr') :
+            swjconst = 277.7778
+        elif (swjvar == 'pa') : 
+            swjconst = 100
+        else : 
+            swjconst = 1
         
 
         for swji in range(0, len(locals()[varname])) : 
+            
             for swjk in range(0, len(locals()[varname][swji])) : 
-                # locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
+                
                 try : 
-                    locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
+                    locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()]*swjconst)
                 except KeyError :
                     locals()[varname2].append(missingvalues[swjvar])
 
@@ -177,7 +186,7 @@ for swjcity in swjcitynum_list :
     
     varname_all3 = varname_all+'3'
 
-    missingvals = [99.9, 999, 9999.99, 999, 999, 0]
+    missingvals = [99.9, 999, 999999, 999, 999, 0]
     num_prev_inserted = 0
 
     locals()[varname_all3] = copy.deepcopy(locals()[varname_all2])
