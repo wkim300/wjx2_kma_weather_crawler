@@ -5,3 +5,4 @@
 *.stat
 *.ddy
 swjdatapart_csv.csv
+.vscode/settings.json
