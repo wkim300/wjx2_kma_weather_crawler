@@ -389,6 +389,7 @@ class WindowClass(QMainWindow, form_class) :
         self.swjlabel.setText("CSV file closed.")        
 
 
+
 if __name__ == "__main__" :
     app = QApplication(sys.argv)
     myWindow = WindowClass()
