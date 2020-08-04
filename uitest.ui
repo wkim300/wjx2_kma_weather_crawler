@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>697</width>
-    <height>419</height>
+    <height>420</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -380,7 +380,7 @@
     </font>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:400;&quot;&gt;TEST Alpha version (2020.06.29)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:400;&quot;&gt;서원준 / qqq000feel@naver.com&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:400;&quot;&gt;TEST Alpha version (2020.08.04)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:400;&quot;&gt;서원준 / qqq000feel@naver.com&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -396,7 +396,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>TextLabel</string>
+    <string>eplogo</string>
    </property>
   </widget>
   <widget class="QLabel" name="dblogolbl">
@@ -409,7 +409,7 @@
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>dblogo</string>
    </property>
   </widget>
   <widget class="QFrame" name="frame_4">

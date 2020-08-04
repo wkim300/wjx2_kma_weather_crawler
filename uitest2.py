@@ -2,6 +2,7 @@ import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QMessageBox
 
 import time
 import datetime
@@ -88,20 +89,10 @@ class WindowClass(QMainWindow, form_class) :
 
         self.testbtn.setStyleSheet("background-color: rgb(255, 255, 255)")
 
-        
-        
-        
-
-        # swjitem.setText("aaa")
-        # self.swjlist.addItem(swjitem)
-        
-
     def swjlistFn(self) : 
         '''aefaef'''
         text_selected = self.swjlist.currentItem().text()
         self.swjcityname = text_selected[text_selected.find(' ')+1:]
-
-        # print(self.swjcityname)
     
     def isleapyear(self, swjyear) : 
         '''awefawef'''
@@ -124,33 +115,33 @@ class WindowClass(QMainWindow, form_class) :
             quote_plus("endHh"): "23",
             quote_plus("stnIds"): str(self.swjcitynum),
             quote_plus("schListCnt"): "900",
-            # quote_plus("schListCnt"): "24",
             quote_plus("pageIndex"): str(swjpage),
             quote_plus("apiKey"): "XwYDQmezGv/fV1d/9NO68o5td/%2Bj3VoOQOaWMgF0xv%2B25yk%2BlxzS8quxVjBQ8VqW"
         })
         return swjparams
 
     def testbtnFn(self) :
-        '''awefawef'''
-        self.TargetYr = self.swjdate.date().year()
-        
-        self.swjyearlabel.setText("설정 연도 : " + str(self.TargetYr))
-        
+        try : 
+            self.TargetYr = self.swjdate.date().year()
+            self.swjyearlabel.setText("설정 연도 : " + str(self.TargetYr))
+            
+            swjindex1 = self.swjcityname.find('(')
+            swjindex2 = self.swjcityname.find(')')
+            self.swjcitynum = self.swjcityname[swjindex1+1:swjindex2]
 
-        swjindex1 = self.swjcityname.find('(')
-        swjindex2 = self.swjcityname.find(')')
-        self.swjcitynum = self.swjcityname[swjindex1+1:swjindex2]
+            self.swjcitylabel.setText("설정 지역 : " + self.swjcityname)
 
-        self.swjcitylabel.setText("설정 지역 : " + self.swjcityname)
+            self.swjbtn1.setEnabled(True)
+            self.swjbtn1.setStyleSheet("background-color: rgb(255, 255, 255)")
 
-        self.swjbtn1.setEnabled(True)
-        self.swjbtn1.setStyleSheet("background-color: rgb(255, 255, 255)")
+            self.swjbtn2.setDisabled(True)
+            self.swjbtn2.setStyleSheet("background-color: rgb(180, 180, 180)")
 
-        self.swjbtn2.setDisabled(True)
-        self.swjbtn2.setStyleSheet("background-color: rgb(180, 180, 180)")
-
-        self.swjbtn3.setDisabled(True)
-        self.swjbtn3.setStyleSheet("background-color: rgb(180, 180, 180)")
+            self.swjbtn3.setDisabled(True)
+            self.swjbtn3.setStyleSheet("background-color: rgb(180, 180, 180)")
+        except AttributeError : 
+            '''awefawef'''
+            QMessageBox.about(self,'오류 알림', '좌측 리스트에서 지역을 먼저 선택해주세요        ')
         
 
     def swjbtn1Fn(self) :
@@ -206,7 +197,6 @@ class WindowClass(QMainWindow, form_class) :
 
             for swji in range(0, len(locals()[varname])) : 
                 for swjk in range(0, len(locals()[varname][swji])) : 
-                    # locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
                     try : 
                         locals()[varname2].append(locals()[varname][swji][swjk][swjvar.upper()])
                     except KeyError :
@@ -246,16 +236,19 @@ class WindowClass(QMainWindow, form_class) :
 
         locals()[varname_all3] = copy.deepcopy(locals()[varname_all2])
 
+        missing_hours_txt = []
         for swja in range(0,len(locals()[varname_all2 + '_err_index'])) : 
                 
             num_miss = locals()[varname_all2 + '_diff_index'][swja]
             index_miss = locals()[varname_all2 + '_err_index'][swja] + num_prev_inserted
             time_prev = datetime.datetime.strptime(locals()[varname_all3][index_miss-1][0], '%Y-%m-%d %H:%M')
             
-            list_insert=[]
+            list_insert = []
+            # missing_hours_txt = []
             for swjb in range(1,num_miss) : 
                 time_insert = time_prev + datetime.timedelta(hours=swjb)
                 time_insert_char = datetime.datetime.strftime(time_insert, '%Y-%m-%d %H:%M')
+                missing_hours_txt.append(time_insert_char)
                 list_insert.append([time_insert_char] + missingvals)
 
             list_insert.reverse()
@@ -266,12 +259,16 @@ class WindowClass(QMainWindow, form_class) :
         ### insert end
 
         self.swjraw2 = locals()[varname_all3]
-
-
-
-
         
         self.swjlabel.setText("기상청 API 조회 완료")
+        msgtxt = ''
+        if len(missing_hours_txt) > 0 :
+            for swjmsg in missing_hours_txt : 
+                msgtxt = msgtxt + swjmsg + '               ' + '\n'
+            QMessageBox.about(self, "누락 데이터", msgtxt)
+        else : 
+            pass
+
 
         self.swjbtn2.setEnabled(True)
         self.swjbtn2.setStyleSheet("background-color: rgb(255, 255, 255)")
@@ -328,12 +325,6 @@ class WindowClass(QMainWindow, form_class) :
         self.swjraw3[3] = [num_pa*100 for num_pa in self.swjraw3[3]]
         # 일사량, 현지기압 단위변환
 
-        self.swjraw4 = [list(self.swjraw4) for self.swjraw4 in zip(*self.swjraw3)]
-        # 단위변환이 완료된 swjraw3을 이후에 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
-        
-        
-
-
         ### EPW파일용 리스트 조립
         swjdatapart2[6] = self.swjraw3[1] # TA
         swjdatapart2[8] = self.swjraw3[2] # HM
@@ -367,6 +358,9 @@ class WindowClass(QMainWindow, form_class) :
 ###################################################################################################################################
 
     def swjbtn3Fn(self) :
+
+        self.swjraw4 = self.swjraw2
+        # 단위변환이 완료된 swjraw3을 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
 
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
         swjheader = ['Time', 'Tair', 'Humidity', 'Pressure', 'WindDirection', 'WindSpeed', 'GlobalRadiation']
