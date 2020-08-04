@@ -262,10 +262,13 @@ class WindowClass(QMainWindow, form_class) :
         
         self.swjlabel.setText("기상청 API 조회 완료")
         msgtxt = ''
+        linenum = 1
         if len(missing_hours_txt) > 0 :
             for swjmsg in missing_hours_txt : 
-                msgtxt = msgtxt + swjmsg + '               ' + '\n'
-            QMessageBox.about(self, "누락 데이터", msgtxt)
+                msgtxt = msgtxt + str(linenum) + '. ' + swjmsg + '                                            √' + '\n'
+                linenum = linenum + 1
+            msgtxt = msgtxt + '\n※ 누락된 시간들의 데이터는 EnergyPlus에서 정의된\n   EPW 누락 데이터 양식에 따라 삽입되었습니다.'
+            QMessageBox.about(self, "서버 원본데이터 중 누락된 시간대가 있습니다", msgtxt)
         else : 
             pass
 
