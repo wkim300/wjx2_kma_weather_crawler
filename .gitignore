@@ -4,6 +4,5 @@
 *.audit
 *.stat
 *.ddy
-swjdatapart_csv.csv
 .vscode/settings.json
 swjdatapart_csv.csv
