@@ -362,7 +362,7 @@ class WindowClass(QMainWindow, form_class) :
 
     def swjbtn3Fn(self) :
 
-        self.swjraw4 = self.swjraw2
+        self.swjraw4 = [list(self.swjraw4) for self.swjraw4 in zip(*self.swjraw3)]
         # 단위변환이 완료된 swjraw3을 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
 
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
