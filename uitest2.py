@@ -338,6 +338,8 @@ class WindowClass(QMainWindow, form_class) :
 
         swjdatapart3 = [list(swjdatapart3) for swjdatapart3 in zip(*swjdatapart2)]
 
+        epwdir = QFileDialog.getExistingDirectory(self,"EPW 파일 저장 폴더를 선택하세요.","",QFileDialog.ShowDirsOnly)
+        print(epwdir[0])
         epwname = "KMA_Weather_Year" + str(self.TargetYr) + "_" + self.swjcityname + ".epw"
 
         with open(epwname,'w') as swjf :
@@ -362,13 +364,16 @@ class WindowClass(QMainWindow, form_class) :
 
     def swjbtn3Fn(self) :
 
-        self.swjraw4 = [list(self.swjraw4) for self.swjraw4 in zip(*self.swjraw3)]
+        # self.swjraw4 = [list(self.swjraw4) for self.swjraw4 in zip(*self.swjraw3)]
+        self.swjraw4 = self.swjraw2
         # 단위변환이 완료된 swjraw3을 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
 
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
         swjheader = ['Time', 'Tair', 'Humidity', 'Pressure', 'WindDirection', 'WindSpeed', 'GlobalRadiation']
-        swjfilename = "output_weather_" + str(self.TargetYr) + "Yr_" + self.swjcityname + "_" + swjcurrenttime + ".csv"
-        f = open(swjfilename,'w', encoding='utf-8', newline='')
+        swjfilename = QFileDialog.getSaveFileName(self,"","","CSV (*.csv)")
+        print(swjfilename[0])
+        # swjfilename = "output_weather_" + str(self.TargetYr) + "Yr_" + self.swjcityname + "_" + swjcurrenttime + ".csv"
+        f = open(swjfilename[0],'w', encoding='utf-8', newline='')
         wr = csv.writer(f)
 
         wr.writerow(swjheader)
