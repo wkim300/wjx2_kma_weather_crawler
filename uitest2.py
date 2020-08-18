@@ -339,8 +339,9 @@ class WindowClass(QMainWindow, form_class) :
         swjdatapart3 = [list(swjdatapart3) for swjdatapart3 in zip(*swjdatapart2)]
 
         epwdir = QFileDialog.getExistingDirectory(self,"EPW 파일 저장 폴더를 선택하세요.","",QFileDialog.ShowDirsOnly)
-        print(epwdir[0])
+        
         epwname = "KMA_Weather_Year" + str(self.TargetYr) + "_" + self.swjcityname + ".epw"
+        epwname = epwdir + "/" + epwname
 
         with open(epwname,'w') as swjf :
             for headerlines in swjheader :
@@ -358,7 +359,9 @@ class WindowClass(QMainWindow, form_class) :
             for datalines in swjdatapart_csv : 
                 swjf2.write(datalines)
 
-        self.swjlabel.setText("Post process done.")
+        msgtxt = epwname + " 저장 완료"
+        QMessageBox.about(self, "EPW 저장 완료", msgtxt)
+        self.swjlabel.setText("EPW Out Finished")
 
 ###################################################################################################################################
 
@@ -382,13 +385,14 @@ class WindowClass(QMainWindow, form_class) :
             wr.writerow(self.swjraw4[swji])
 
         
-        self.swjlabel.setText("CSV Out Done.")
+        
 
         f.close()
 
         
-
-        self.swjlabel.setText("CSV file closed.")        
+        msgtxt = str(swjfilename[0]) + " 저장 완료"
+        QMessageBox.about(self, "CSV 저장 완료", msgtxt)
+        self.swjlabel.setText("CSV Out Finished")       
 
 
 
