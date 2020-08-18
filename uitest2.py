@@ -90,12 +90,10 @@ class WindowClass(QMainWindow, form_class) :
         self.testbtn.setStyleSheet("background-color: rgb(255, 255, 255)")
 
     def swjlistFn(self) : 
-        '''aefaef'''
         text_selected = self.swjlist.currentItem().text()
         self.swjcityname = text_selected[text_selected.find(' ')+1:]
     
     def isleapyear(self, swjyear) : 
-        '''awefawef'''
         if ((swjyear % 4 == 0) and (swjyear % 100 != 0)) or (swjyear % 400 == 0) :
             return True
         else : 
@@ -372,7 +370,7 @@ class WindowClass(QMainWindow, form_class) :
         # 단위변환이 완료된 swjraw3을 CSV-write 하기 위해 다시 Row-matrix로 Transpose하여 swjraw4를 생성
 
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
-        swjheader = ['Time', 'Tair', 'Humidity', 'Pressure', 'WindDirection', 'WindSpeed', 'GlobalRadiation']
+        swjheader = ['Time', 'Tair(`C)', 'Humidity(%)', 'Pressure(hPa)', 'WindDirection(Deg)', 'WindSpeed(m/s)', 'GlobalRadiation(MJ/m^2)']
         swjfilename = QFileDialog.getSaveFileName(self,"","","CSV (*.csv)")
         print(swjfilename[0])
         # swjfilename = "output_weather_" + str(self.TargetYr) + "Yr_" + self.swjcityname + "_" + swjcurrenttime + ".csv"
@@ -383,10 +381,6 @@ class WindowClass(QMainWindow, form_class) :
 
         for swji in range(0,len(self.swjraw4)):
             wr.writerow(self.swjraw4[swji])
-
-        
-        
-
         f.close()
 
         
