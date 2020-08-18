@@ -10,4 +10,8 @@ swjdatapart_csv.csv
 META_관측지점정보_20200702174400.xlsx
 ~$META_관측지점정보_20200702174400.xlsx
 META_관측지점정보_20200702174400.xls
+<<<<<<< HEAD
 swjdatapart_csv.csv
+=======
+*.db
+>>>>>>> 57689ffe273e9c96a6219173a3b6c63488a1bab9
