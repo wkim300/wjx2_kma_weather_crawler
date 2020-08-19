@@ -342,28 +342,32 @@ class WindowClass(QMainWindow, form_class) :
 
         epwdir = QFileDialog.getExistingDirectory(self,"EPW 파일 저장 폴더를 선택하세요.","",QFileDialog.ShowDirsOnly)
         
-        epwname = "KMA_Weather_Year" + str(self.TargetYr) + "_" + self.swjcityname + ".epw"
-        epwname = epwdir + "/" + epwname
+        if epwdir == "" : 
+            msgtxt = "폴더를 선택해야 저장하실 수 있습니다."
+            QMessageBox.about(self, "알림", msgtxt)
+        else : 
+            epwname = "KMA_Weather_Year" + str(self.TargetYr) + "_" + self.swjcityname + ".epw"
+            epwname = epwdir + "/" + epwname
 
-        with open(epwname,'w') as swjf :
-            for headerlines in swjheader :
-                swjf.write(headerlines)        
+            with open(epwname,'w') as swjf :
+                for headerlines in swjheader :
+                    swjf.write(headerlines)        
 
-        with open('swjdatapart_csv.csv','w', encoding='utf-8', newline='') as f :
-            wr = csv.writer(f)
-            for swji in range(0,len(swjdatapart3)) :
-                wr.writerow(swjdatapart3[swji])
+            with open('swjdatapart_csv.csv','w', encoding='utf-8', newline='') as f :
+                wr = csv.writer(f)
+                for swji in range(0,len(swjdatapart3)) :
+                    wr.writerow(swjdatapart3[swji])
 
-        with open('swjdatapart_csv.csv','r') as f2 : 
-            swjdatapart_csv = f2.readlines()
+            with open('swjdatapart_csv.csv','r') as f2 : 
+                swjdatapart_csv = f2.readlines()
 
-        with open(epwname, 'a') as swjf2 :
-            for datalines in swjdatapart_csv : 
-                swjf2.write(datalines)
+            with open(epwname, 'a') as swjf2 :
+                for datalines in swjdatapart_csv : 
+                    swjf2.write(datalines)
 
-        msgtxt = epwname + " 저장 완료"
-        QMessageBox.about(self, "EPW 저장 완료", msgtxt)
-        self.swjlabel.setText("EPW Out Finished")
+            msgtxt = epwname + " 저장 완료"
+            QMessageBox.about(self, "EPW 저장 완료", msgtxt)
+            self.swjlabel.setText("EPW Out Finished")
 
 ###################################################################################################################################
 
@@ -374,21 +378,25 @@ class WindowClass(QMainWindow, form_class) :
         swjcurrenttime = time.strftime('%Y%m%d_%H-%M-%S', time.localtime(time.time()))
         swjheader = ['Time', 'Tair(`C)', 'Humidity(%)', 'Pressure(hPa)', 'WindDirection(Deg)', 'WindSpeed(m/s)', 'GlobalRadiation(MJ/m^2)']
         swjfilename = QFileDialog.getSaveFileName(self,"","","CSV (*.csv)")
-        print(swjfilename[0])
+        # print(swjfilename[0])
         # swjfilename = "output_weather_" + str(self.TargetYr) + "Yr_" + self.swjcityname + "_" + swjcurrenttime + ".csv"
-        f = open(swjfilename[0],'w', encoding='utf-8', newline='')
-        wr = csv.writer(f)
 
-        wr.writerow(swjheader)
+        try : 
+            f = open(swjfilename[0],'w', encoding='utf-8', newline='')
+            wr = csv.writer(f)
 
-        for swji in range(0,len(self.swjraw4)):
-            wr.writerow(self.swjraw4[swji])
-        f.close()
+            wr.writerow(swjheader)
 
-        
-        msgtxt = str(swjfilename[0]) + " 저장 완료"
-        QMessageBox.about(self, "CSV 저장 완료", msgtxt)
-        self.swjlabel.setText("CSV Out Finished")       
+            for swji in range(0,len(self.swjraw4)):
+                wr.writerow(self.swjraw4[swji])
+            f.close()
+
+            
+            msgtxt = str(swjfilename[0]) + " 저장 완료"
+            QMessageBox.about(self, "CSV 저장 완료", msgtxt)
+            self.swjlabel.setText("CSV Out Finished")       
+        except FileNotFoundError : 
+            pass
 
 
 
