@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5 import QtCore
+from PyQt5 import QtWidgets
 
 import time
 import datetime
@@ -24,10 +26,17 @@ form_class = uic.loadUiType("uitest.ui")[0]
 
 
 class WindowClass(QMainWindow, form_class) :
+    
+    swjProgress = QtCore.pyqtSignal(int)
+    swjLabelProgress = QtCore.pyqtSignal(str)
+    swjfinish = QtCore.pyqtSignal()
+
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
 
+        
+        
         swjwidth = self.frameGeometry().width()
         swjheight = self.frameGeometry().height()
 
@@ -78,6 +87,9 @@ class WindowClass(QMainWindow, form_class) :
         self.swjbtn3.clicked.connect(self.swjbtn3Fn)
         self.testbtn.clicked.connect(self.testbtnFn)
         self.swjlist.itemClicked.connect(self.swjlistFn)
+        self.swjProgress.connect(self.swjpbar.setValue)
+        self.swjLabelProgress.connect(self.swjlabel.setText)
+        self.swjfinish.connect(self.FinMsgFn)
 
         self.swjbtn1.setDisabled(True)
         self.swjbtn1.setStyleSheet("background-color: rgb(180, 180, 180)")
@@ -169,8 +181,10 @@ class WindowClass(QMainWindow, form_class) :
             swjparams = self.swjparam(swji)
             # print(swjurl+unquote(swjparams))
 
-            self.swjlabel.setText(str(swji) + "/10" + " : 기상청 API 서버 데이터 조회중..")
-            self.swjlabel.repaint()
+            # self.swjlabel.setText(str(swji) + "/10" + " : 기상청 API 서버 데이터 조회중..")
+            # self.swjlabel.repaint()
+            self.swjLabelProgress.emit(str(swji) + "/10" + " : 기상청 API 서버 데이터 조회중..")
+
             swjreq = urllib.request.Request(swjurl+unquote(swjparams))
             
             self.swjdata=[]
@@ -182,10 +196,12 @@ class WindowClass(QMainWindow, form_class) :
             
             locals()[varname].append(self.swjdata)
             
-            QApplication.processEvents()
-            swjprogress = (swji/10)*100
-            self.swjpbar.setValue(swjprogress)
-            self.swjpbar.repaint()
+            self.swjProgress.emit(int((swji/10)*100))
+
+            # QApplication.processEvents()
+            # swjprogress = (swji/10)*100
+            # self.swjpbar.setValue(swjprogress)
+            # self.swjpbar.repaint()
 
         varname_all = varname + '_all'
         locals()[varname_all] = []
@@ -263,20 +279,14 @@ class WindowClass(QMainWindow, form_class) :
         ### insert end
 
         self.swjraw2 = locals()[varname_all3]
+
+        self.MissHourTxt = missing_hours_txt
+
+        self.swjfinish.emit()
         
         self.swjlabel.setText("기상청 API 조회 완료")
-        msgtxt = ''
-        linenum = 1
-        if len(missing_hours_txt) > 0 :
-            for swjmsg in missing_hours_txt : 
-                msgtxt = msgtxt + str(linenum) + '. ' + swjmsg + '                                            √' + '\n'
-                linenum = linenum + 1
-            msgtxt = msgtxt + '\n※ 누락된 시간들의 데이터는 EnergyPlus에서 정의된\n   EPW 누락 데이터 양식에 따라 삽입되었습니다.'
-            QMessageBox.about(self, "서버 원본데이터 중 누락된 시간대가 있습니다", msgtxt)
-        else : 
-            pass
-
-
+        
+        
         self.swjbtn2.setEnabled(True)
         self.swjbtn2.setStyleSheet("background-color: rgb(255, 255, 255)")
 
@@ -288,6 +298,23 @@ class WindowClass(QMainWindow, form_class) :
         
         self.testbtn.setEnabled(True)
         self.testbtn.setStyleSheet("background-color: rgb(255, 255, 255)")
+
+    def FinMsgFn(self) : 
+        '''awefawef'''
+        
+        msgtxt = ''
+        linenum = 1
+        if len(self.MissHourTxt) > 0 :
+            for swjmsg in self.MissHourTxt : 
+                msgtxt = msgtxt + str(linenum) + '. ' + swjmsg + '                                            √' + '\n'
+                linenum = linenum + 1
+            msgtxt = msgtxt + '\n※ 누락된 시간들의 데이터는 EnergyPlus에서 정의된\n   EPW 누락 데이터 양식에 따라 삽입되었습니다.'
+            self.mbox = QtWidgets.QMessageBox()
+            self.mbox.about(QtWidgets.QMainWindow(), "서버 원본데이터 중 누락된 시간대가 있습니다", msgtxt)
+        else : 
+            pass
+
+        
 
         
 
