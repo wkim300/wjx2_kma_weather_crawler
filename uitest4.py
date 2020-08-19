@@ -23,7 +23,7 @@ import csv
 # from PyQt5.QtCore import pyqtSignal, pyqtSlot
 # import requests
 
-form_class = uic.loadUiType("uitest.ui")[0]
+form_class = uic.loadUiType("bubalus.ui")[0]
 
 
 class WindowClass(QMainWindow, form_class) :
