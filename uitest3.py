@@ -49,6 +49,10 @@ class WindowClass(QMainWindow, form_class) :
         pixmap_db = pixmap_db.scaledToHeight(45)
         self.dblogolbl.setPixmap(QPixmap(pixmap_db))
 
+        pixmap_logo = QPixmap("ourlogo.png")
+        pixmap_logo = pixmap_logo.scaledToHeight(45)
+        self.ourlogolbl.setPixmap(QPixmap(pixmap_logo))
+
         self.setFixedSize(swjwidth,swjheight)
 
         swjcities = ['강원도 북강릉(104)', '강원도 강릉(105)', '강원도 속초(90)', '강원도 동해(106)',
