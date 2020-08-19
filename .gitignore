@@ -1,4 +1,3 @@
-*.epw
 /build
 *.audit
 *.stat
