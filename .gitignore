@@ -15,3 +15,6 @@ swjdatapart_csv.csv
 =======
 *.db
 >>>>>>> 57689ffe273e9c96a6219173a3b6c63488a1bab9
+dist/
+
+__pycache__/
