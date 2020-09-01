@@ -429,7 +429,7 @@ class WindowClass(QMainWindow, form_class) :
             self.swjlabel.setText("CSV Out Finished")       
         except FileNotFoundError : 
             pass
-
+'''awefawef'''
 
 
 if __name__ == "__main__" :
