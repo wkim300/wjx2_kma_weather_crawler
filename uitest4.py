@@ -8,14 +8,14 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets
 
-import time
+import time 
 import datetime
 from datetime import timedelta
-import copy
 
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
 
+import copy
 import urllib
 import json
 import csv
