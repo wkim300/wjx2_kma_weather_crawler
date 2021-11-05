@@ -23,6 +23,10 @@ import csv
 # from PyQt5.QtCore import pyqtSignal, pyqtSlot
 # import requests
 
+
+###### TOBE : Global horizontal solar radiation split into direct beam solar and diffuse solar radiation
+
+
 form_class = uic.loadUiType("bubalus.ui")[0]
 
 
