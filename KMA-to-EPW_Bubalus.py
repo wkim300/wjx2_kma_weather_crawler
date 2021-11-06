@@ -25,6 +25,7 @@ import csv
 
 
 ###### TOBE : Global horizontal solar radiation split into direct beam solar and diffuse solar radiation
+###### 직산분리 Perez model 적용? 
 
 
 form_class = uic.loadUiType("bubalus.ui")[0]
